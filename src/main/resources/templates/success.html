@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>毕业生管理信息系统</title>
+    <link rel="icon" type="image/png" href="https://cn.vuejs.org/logo.svg">
+    <!-- ElementUI -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- success.css -->
+    <link rel="stylesheet" href="/css/success.css">
+</head>
+<body>
+
+<div id="app">
+    <el-container>
+        <el-header>
+            <el-menu
+                    :default-active="activeIndex"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="handleSelect"
+                    background-color="#545c64"
+                    text-color="#fff"
+                    active-text-color="#ffd04b">
+                <el-menu-item><em>毕业生管理信息系统</em></el-menu-item>
+                <el-menu-item index="1">毕业生基本信息</el-menu-item>
+                <el-menu-item index="2">毕业生就业信息</el-menu-item>
+                <el-menu-item><i class="el-icon-switch-button"></i>安全退出</el-menu-item>
+            </el-menu>
+        </el-header>
+        <el-main v-if="activeIndex == '1'">
+            <div class="bar_basic">
+                <div class="craet_basic">
+                    <el-button plain @click="createDialogVisible = true">新 增</el-button>
+                </div>
+                <el-dialog
+                        title="新增毕业生基本信息"
+                        :visible.sync="createDialogVisible"
+                        @close="resetForm('basicForm')"
+                        width="30%"
+                        center>
+                    <el-form hide-required-asterisk :model="basicForm" :rules="basicRules" ref="basicForm"
+                             label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="姓名" prop="name">
+                            <el-input v-model="basicForm.name" placeholder="张三"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别" prop="gender">
+                            <el-select v-model="basicForm.gender" placeholder="请选择性别" style="width: 100%;">
+                                <el-option label="男" value="男"></el-option>
+                                <el-option label="女" value="女"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="民族" prop="nation">
+                            <el-input v-model="basicForm.nation" placeholder="汉族"></el-input>
+                        </el-form-item>
+                        <el-form-item label="籍贯" prop="hometown">
+                            <el-input v-model="basicForm.hometown" placeholder="四川成都"></el-input>
+                        </el-form-item>
+                        <el-form-item label="毕业时间" prop="graduationTime">
+                            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                                            v-model="basicForm.graduationTime" style="width: 100%;" placeholder="请选择毕业时间"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="年级" prop="grade">
+                            <el-input v-model="basicForm.grade" placeholder="2020"></el-input>
+                        </el-form-item>
+                        <el-form-item label="专业" prop="discipline">
+                            <el-input v-model="basicForm.discipline" placeholder="软件技术"></el-input>
+                        </el-form-item>
+                        <el-form-item label="政治面貌" prop="politicalStatus">
+                            <el-select v-model="basicForm.politicalStatus" placeholder="请选择政治面貌"
+                                       style="width: 100%;">
+                                <el-option label="群众" value="群众"></el-option>
+                                <el-option label="共青团员" value="共青团员"></el-option>
+                                <el-option label="预备党员" value="预备党员"></el-option>
+                                <el-option label="党员" value="党员"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="createDialogVisible = false">取 消</el-button>
+                        <el-button type="success" plain @click="createBasicInfo">确 定</el-button>
+                    </span>
+                </el-dialog>
+                <div class="search_basic">
+                    <el-form :inline="true" :model="basicForm" class="demo-form-inline">
+                        <el-form-item label="姓名">
+                            <el-input v-model="basicForm.name" placeholder="张三"></el-input>
+                        </el-form-item>
+                        <el-form-item label="年级">
+                            <el-input v-model="basicForm.grade" placeholder="2020"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button plain @click="queryBasic" icon="el-icon-search"></el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+            <el-table
+                    :data="basicInfo"
+                    :header-cell-style="{
+                    background: 'transparent',
+                    color: 'white'
+                    }"
+                    style="width: 100%">
+                <el-table-column
+                        fixed
+                        prop="id"
+                        align="center"
+                        label="序号">
+                </el-table-column>
+                <el-table-column
+                        fixed
+                        prop="name"
+                        align="center"
+                        label="姓名">
+                </el-table-column>
+                <el-table-column
+                        prop="gender"
+                        align="center"
+                        label="性别">
+                </el-table-column>
+                <el-table-column
+                        prop="nation"
+                        align="center"
+                        label="民族">
+                </el-table-column>
+                <el-table-column
+                        prop="hometown"
+                        align="center"
+                        label="籍贯">
+                </el-table-column>
+                <el-table-column
+                        prop="graduationTime"
+                        align="center"
+                        label="毕业时间">
+                </el-table-column>
+                <el-table-column
+                        prop="grade"
+                        align="center"
+                        label="年级">
+                </el-table-column>
+                <el-table-column
+                        prop="discipline"
+                        align="center"
+                        label="专业">
+                </el-table-column>
+                <el-table-column
+                        prop="politicalStatus"
+                        align="center"
+                        label="政治面貌">
+                </el-table-column>
+                <el-table-column
+                        fixed="right"
+                        align="center"
+                        label="操作"
+                        width="100">
+                    <template slot-scope="scope">
+                        <el-button @click="editBasicInfo(scope.row)" type="text" size="small" icon="el-icon-edit"></el-button>&nbsp;&nbsp;
+                        <el-popover
+                                placement="top"
+                                title="确定要删除吗？"
+                                trigger="click">
+                            <div style="text-align: center; margin: 0">
+                                <el-button type="danger" plain size="mini" @click="deleteBasic(scope.row)">
+                                    确定删除
+                                </el-button>
+                            </div>
+                            <el-button type="text" size="small" slot="reference" icon="el-icon-delete"></el-button>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pagination.currentPage"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pagination.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pagination.total">
+            </el-pagination>
+            <el-dialog
+                    title="编辑毕业生基本信息"
+                    :visible.sync="editDialogVisible"
+                    width="30%"
+                    center>
+                <el-form hide-required-asterisk :model="basicForm" :rules="basicRules" ref="basicForm"
+                         label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="basicForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="gender">
+                        <el-select v-model="basicForm.gender" placeholder="请选择性别" style="width: 100%;">
+                            <el-option label="男" value="男"></el-option>
+                            <el-option label="女" value="女"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="民族" prop="nation">
+                        <el-input v-model="basicForm.nation"></el-input>
+                    </el-form-item>
+                    <el-form-item label="籍贯" prop="hometown">
+                        <el-input v-model="basicForm.hometown"></el-input>
+                    </el-form-item>
+                    <el-form-item label="毕业时间" prop="graduationTime">
+                        <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="basicForm.graduationTime"
+                                        style="width: 100%;"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="年级" prop="grade">
+                        <el-input v-model="basicForm.grade"></el-input>
+                    </el-form-item>
+                    <el-form-item label="专业" prop="discipline">
+                        <el-input v-model="basicForm.discipline"></el-input>
+                    </el-form-item>
+                    <el-form-item label="政治面貌" prop="politicalStatus">
+                        <el-select v-model="basicForm.politicalStatus" placeholder="请选择政治面貌"
+                                   style="width: 100%;">
+                            <el-option label="群众" value="群众"></el-option>
+                            <el-option label="共青团员" value="共青团员"></el-option>
+                            <el-option label="预备党员" value="预备党员"></el-option>
+                            <el-option label="党员" value="党员"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="editDialogVisible = false">取 消</el-button>
+                        <el-button type="primary" plain @click="putEditBasicInfo">修 改</el-button>
+                    </span>
+            </el-dialog>
+        </el-main>
+        <el-main v-if="activeIndex == '2'">
+            <div class="bar_basic">
+                <div class="craet_basic">
+                    <el-button plain @click="createEmpDialogVisible = true">新 增</el-button>
+                </div>
+                <el-dialog
+                        title="新增毕业生基本信息"
+                        :visible.sync="createEmpDialogVisible"
+                        @close="resetForm('empForm')"
+                        width="30%"
+                        center>
+                    <el-form hide-required-asterisk :model="empForm" :rules="empRules" ref="empForm"
+                             label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="序号" prop="bid">
+                            <el-input v-model="empForm.bid" placeholder="9527"></el-input>
+                        </el-form-item>
+                        <el-form-item label="就业时间" prop="empTime">
+                            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                                            v-model="empForm.empTime" style="width: 100%;" placeholder="请选择就业时间"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="工作单位" prop="employer">
+                            <el-input v-model="empForm.employer" placeholder="腾讯科技（深圳）有限公司"></el-input>
+                        </el-form-item>
+                        <el-form-item label="工作性质" prop="natureOfWork">
+                            <el-select v-model="empForm.natureOfWork" placeholder="请选择工作性质"
+                                       style="width: 100%;">
+                                <el-option label="事业单位" value="事业单位"></el-option>
+                                <el-option label="国家机关" value="国家机关"></el-option>
+                                <el-option label="企业" value="企业"></el-option>
+                                <el-option label="自由职业者" value="自由职业者"></el-option>
+                                <el-option label="其他" value="其他"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="职务" prop="post">
+                            <el-input v-model="empForm.post" placeholder="Java工程师"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" prop="address">
+                            <el-input v-model="empForm.address" placeholder="深圳市南山区高新区科技中一路腾讯大厦35层"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="createEmpDialogVisible = false">取 消</el-button>
+                        <el-button type="success" plain @click="createEmpInfo">确 定</el-button>
+                    </span>
+                </el-dialog>
+                <div class="search_basic">
+                    <el-form :inline="true" :model="empForm" class="demo-form-inline">
+                        <el-form-item label="就业时间">
+                            <el-input v-model="empForm.empTime" placeholder="2020"></el-input>
+                        </el-form-item>
+                        <el-form-item label="工作单位">
+                            <el-input v-model="empForm.post" placeholder="腾讯"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button plain @click="" icon="el-icon-search"></el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+            <el-table
+                    :data="empInfo"
+                    :header-cell-style="{
+                    background: 'transparent',
+                    color: 'white'
+                    }"
+                    style="width: 100%">
+                <el-table-column
+                        fixed
+                        prop="bid"
+                        align="center"
+                        label="序号">
+                </el-table-column>
+                <el-table-column
+                        fixed
+                        prop="name"
+                        align="center"
+                        label="姓名">
+                </el-table-column>
+                <el-table-column
+                        prop="empTime"
+                        align="center"
+                        label="就业时间">
+                </el-table-column>
+                <el-table-column
+                        prop="employer"
+                        align="center"
+                        label="工作单位">
+                </el-table-column>
+                <el-table-column
+                        prop="natureOfWork"
+                        align="center"
+                        label="工作性质">
+                </el-table-column>
+                <el-table-column
+                        prop="post"
+                        align="center"
+                        label="职务">
+                </el-table-column>
+                <el-table-column
+                        prop="address"
+                        align="center"
+                        label="地址">
+                </el-table-column>
+                <el-table-column
+                        fixed="right"
+                        align="center"
+                        label="操作"
+                        width="100">
+                    <template slot-scope="scope">
+                        <el-button @click="editBasicInfo(scope.row)" type="text" size="small" icon="el-icon-edit"></el-button>&nbsp;&nbsp;
+                        <el-popover
+                                placement="top"
+                                title="确定要删除吗？"
+                                trigger="click">
+                            <div style="text-align: center; margin: 0">
+                                <el-button type="danger" plain size="mini" @click="deleteBasic(scope.row)">
+                                    确定删除
+                                </el-button>
+                            </div>
+                            <el-button type="text" size="small" slot="reference" icon="el-icon-delete"></el-button>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+        </el-main>
+    </el-container>
+</div>
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
+<!-- 引入Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- success.js -->
+<script src="/js/success.js"></script>
+</body>
+</html>

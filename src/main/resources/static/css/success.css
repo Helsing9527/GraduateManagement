@@ -1,0 +1,88 @@
+/*渐变背景*/
+body {
+    margin: 0;
+    background: linear-gradient(-45deg, #00FFFF, #7FFFD4, #87CEEB, #23d5ab);
+    background-size: 600% 600%;
+    animation: gradientBG 5s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/*导航栏*/
+.el-header {
+    padding: 0;
+}
+
+.el-menu-demo > .el-menu-item:first-child {
+    margin: 0 10px 0 50px;
+}
+
+.el-menu-demo > .el-menu-item:last-child {
+    float: right;
+    margin-right: 50px;
+}
+
+em {
+    font-size: large;
+}
+
+/*操作栏*/
+.bar_basic {
+    height: 62px;
+    border-bottom: 3px solid rgb(255, 208, 75);
+}
+
+.craet_basic {
+    float: left;
+}
+
+.search_basic {
+    float: right;
+}
+
+.el-button, .el-input__inner {
+    background: transparent;
+}
+
+/*信息列表*/
+.el-main {
+    margin: 20px 80px;
+    padding: 20px;
+}
+
+/*最外层透明*/
+.el-table, .el-table__expanded-cell {
+    background: transparent;
+}
+
+/* 表格内背景颜色 */
+.el-table th, .el-table tr, .el-table td {
+    background-color: transparent;
+}
+
+.el-popover__title {
+    text-align: center;
+}
+
+.el-pagination {
+    text-align: center;
+    margin-top: 30px;
+}
+/*分页工具透明*/
+.el-pagination .btn-prev, .el-pagination .btn-next, .el-pagination button:disabled {
+    background: transparent;
+}
+
+.el-pager li {
+    background: transparent;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>毕业生管理信息系统-登录</title>
+    <link rel="icon" type="image/png" href="https://cn.vuejs.org/logo.svg">
+    <!-- ElementUI -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- login.css -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<div id="app">
+    <div class="main">
+        <!-- 登录表单 -->
+        <el-form :model="ruleForm" status-icon hide-required-asterisk :rules="rules" ref="ruleForm" label-width="100px"
+                 class="demo-ruleForm" v-if="loginOrRegister== 'login'">
+            <p>毕业生管理信息系统</p>
+            <el-form-item label="用户名" prop="username">
+                <el-input type="text" v-model="ruleForm.account" placeholder="请输入用户名"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+                <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+            <el-button type="primary" plain @click="submitForm('ruleForm')">登 录</el-button>
+            <el-button type="success" plain @click="switchRegister">注 册</el-button>
+        </el-form>
+
+        <!-- 注册表单 -->
+        <el-form :model="ruleForm" status-icon hide-required-asterisk :rules="rules" ref="ruleForm" label-width="100px"
+                 class="demo-ruleForm" v-if="loginOrRegister== 'register'">
+            <p>毕业生管理信息系统</p>
+            <el-form-item label="用户名" prop="username">
+                <el-input type="text" v-model="ruleForm.account" placeholder="请输入用户名"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+                <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+            <el-form-item label="授权码" prop="auth">
+                <el-input type="password" v-model="ruleForm.permission" placeholder="授权码非必填"></el-input>
+            </el-form-item>
+            <el-button type="primary" plain @click="registerForm('ruleForm')">注 册</el-button>
+            <el-button type="success" plain @click="switchLogin">返回登录</el-button>
+        </el-form>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
+<!-- 引入Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- 樱花特效引入 -->
+<script src="/js/sakuraPlus.js"></script>
+<!-- login.js -->
+<script src="/js/login.js"></script>
+</body>
+</html>
