@@ -25,7 +25,7 @@
                 <el-menu-item><em>毕业生管理信息系统</em></el-menu-item>
                 <el-menu-item index="1">毕业生基本信息</el-menu-item>
                 <el-menu-item index="2">毕业生就业信息</el-menu-item>
-                <el-menu-item><i class="el-icon-switch-button"></i>安全退出</el-menu-item>
+                <el-menu-item @click="logout"><i class="el-icon-switch-button"></i>安全退出</el-menu-item>
             </el-menu>
         </el-header>
         <el-main v-if="activeIndex == '1'">
@@ -58,7 +58,8 @@
                         </el-form-item>
                         <el-form-item label="毕业时间" prop="graduationTime">
                             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                                            v-model="basicForm.graduationTime" style="width: 100%;" placeholder="请选择毕业时间"></el-date-picker>
+                                            v-model="basicForm.graduationTime" style="width: 100%;"
+                                            placeholder="请选择毕业时间"></el-date-picker>
                         </el-form-item>
                         <el-form-item label="年级" prop="grade">
                             <el-input v-model="basicForm.grade" placeholder="2020"></el-input>
@@ -155,7 +156,8 @@
                         label="操作"
                         width="100">
                     <template slot-scope="scope">
-                        <el-button @click="editBasicInfo(scope.row)" type="text" size="small" icon="el-icon-edit"></el-button>&nbsp;&nbsp;
+                        <el-button @click="editBasicInfo(scope.row)" type="text" size="small"
+                                   icon="el-icon-edit"></el-button>&nbsp;&nbsp;
                         <el-popover
                                 placement="top"
                                 title="确定要删除吗？"
@@ -243,9 +245,13 @@
                         <el-form-item label="序号" prop="bid">
                             <el-input v-model="empForm.bid" placeholder="9527"></el-input>
                         </el-form-item>
+                        <el-form-item label="姓名" prop="name">
+                            <el-input v-model="empForm.name" placeholder="张三"></el-input>
+                        </el-form-item>
                         <el-form-item label="就业时间" prop="empTime">
                             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                                            v-model="empForm.empTime" style="width: 100%;" placeholder="请选择就业时间"></el-date-picker>
+                                            v-model="empForm.empTime" style="width: 100%;"
+                                            placeholder="请选择就业时间"></el-date-picker>
                         </el-form-item>
                         <el-form-item label="工作单位" prop="employer">
                             <el-input v-model="empForm.employer" placeholder="腾讯科技（深圳）有限公司"></el-input>
@@ -264,7 +270,8 @@
                             <el-input v-model="empForm.post" placeholder="Java工程师"></el-input>
                         </el-form-item>
                         <el-form-item label="地址" prop="address">
-                            <el-input v-model="empForm.address" placeholder="深圳市南山区高新区科技中一路腾讯大厦35层"></el-input>
+                            <el-input v-model="empForm.address"
+                                      placeholder="深圳市南山区高新区科技中一路腾讯大厦35层"></el-input>
                         </el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
@@ -336,13 +343,14 @@
                         label="操作"
                         width="100">
                     <template slot-scope="scope">
-                        <el-button @click="editBasicInfo(scope.row)" type="text" size="small" icon="el-icon-edit"></el-button>&nbsp;&nbsp;
+                        <el-button @click="editEmpInfo(scope.row)" type="text" size="small"
+                                   icon="el-icon-edit"></el-button>&nbsp;&nbsp;
                         <el-popover
                                 placement="top"
                                 title="确定要删除吗？"
                                 trigger="click">
                             <div style="text-align: center; margin: 0">
-                                <el-button type="danger" plain size="mini" @click="deleteBasic(scope.row)">
+                                <el-button type="danger" plain size="mini" @click="deleteEmp(scope.row)">
                                     确定删除
                                 </el-button>
                             </div>
@@ -351,6 +359,58 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-pagination
+                    @size-change="handleEmpSizeChange"
+                    @current-change="handleEmpCurrentChange"
+                    :current-page="paginationEmp.currentPage"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="paginationEmp.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="paginationEmp.total">
+            </el-pagination>
+            <el-dialog
+                    title="编辑毕业生就业信息"
+                    :visible.sync="editEmpDialogVisible"
+                    width="30%"
+                    center>
+                <el-form :model="empForm" :rules="empRules" ref="empForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="序号" prop="bid">
+                        <el-input v-model="empForm.bid"></el-input>
+                    </el-form-item>
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="empForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="就业时间" prop="empTime">
+                        <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                                        v-model="empForm.empTime" style="width: 100%;"
+                                        placeholder="请选择就业时间"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="工作单位" prop="employer">
+                        <el-input v-model="empForm.employer" placeholder="腾讯科技（深圳）有限公司"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作性质" prop="natureOfWork">
+                        <el-select v-model="empForm.natureOfWork" placeholder="请选择工作性质"
+                                   style="width: 100%;">
+                            <el-option label="事业单位" value="事业单位"></el-option>
+                            <el-option label="国家机关" value="国家机关"></el-option>
+                            <el-option label="企业" value="企业"></el-option>
+                            <el-option label="自由职业者" value="自由职业者"></el-option>
+                            <el-option label="其他" value="其他"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="职务" prop="post">
+                        <el-input v-model="empForm.post" placeholder="Java工程师"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address">
+                        <el-input v-model="empForm.address"
+                                  placeholder="深圳市南山区高新区科技中一路腾讯大厦35层"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="editEmpDialogVisible = false">取 消</el-button>
+                        <el-button type="primary" plain @click="putEditEmpInfo">修 改</el-button>
+                </span>
+            </el-dialog>
 
         </el-main>
     </el-container>

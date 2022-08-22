@@ -1,5 +1,6 @@
 package icu.jswz.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**

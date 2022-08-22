@@ -4,9 +4,14 @@ $(function () {
         data() {
             return {
                 // 默认主页-毕业生基本信息
-                activeIndex: '2',
+                activeIndex: '1',
                 // 分页工具
                 pagination: {
+                    currentPage: 1,
+                    pageSize: 10,
+                    total: 0
+                },
+                paginationEmp: {
                     currentPage: 1,
                     pageSize: 10,
                     total: 0
@@ -70,6 +75,12 @@ $(function () {
                     address: ''
                 },
                 empRules: {
+                    bid: [
+                        { required: true, message: '毕业生序号', trigger: 'blur' }
+                    ],
+                    name: [
+                        { required: true, message: '姓名', trigger: 'blur' }
+                    ],
                     empTime: [
                         { required: true, message: '请选择日期', trigger: 'change' }
                     ],
@@ -85,7 +96,9 @@ $(function () {
                     address: [
                         { required: true, message: '地址', trigger: 'blur' }
                     ]
-                }
+                },
+                // 编辑 毕业生就业信息弹窗
+                editEmpDialogVisible: false
             }
         },
         methods: {
@@ -171,7 +184,7 @@ $(function () {
                 })
             },
             deleteBasic(row) {
-                axios.delete("/api/basic/0" + row.id).then((res) => {
+                axios.delete("/api/basic/" + row.id).then((res) => {
                     if (res.data.flag) {
                         this.$notify({
                             title: '成功',
@@ -194,18 +207,17 @@ $(function () {
             queryEmp() {
                 param = "?empTime=" + this.empForm.empTime;
                 param += "&employer=" +this.empForm.employer;
-                axios.get("/api/emp/" + this.pagination.currentPage + "/" + this.pagination.pageSize + param).then((res) => {
+                axios.get("/api/emp/" + this.paginationEmp.currentPage + "/" + this.paginationEmp.pageSize + param).then((res) => {
                     if (res.data.flag) {
                         this.empInfo = res.data.data.records;
-                        this.pagination.currentPage = res.data.data.current;
-                        this.pagination.pageSize = res.data.data.size;
-                        this.pagination.total = res.data.data.total;
+                        this.paginationEmp.currentPage = res.data.data.current;
+                        this.paginationEmp.pageSize = res.data.data.size;
+                        this.paginationEmp.total = res.data.data.total;
                     }
                 })
             },
-            // 新增毕业生基本信息
+            // 新增毕业生就业信息
             createEmpInfo() {
-                console.log(this.empForm)
                 axios.post("/api/emp", this.empForm).then((res) => {
                     if (res.data.flag) {
                         this.$notify({
@@ -225,9 +237,64 @@ $(function () {
                     this.queryEmp()
                 })
             },
+            // 修改毕业生就业信息
+            editEmpInfo(row) {
+                this.editEmpDialogVisible = true;
+                this.empForm = row;
+            },
+            putEditEmpInfo() {
+                axios.put("/api/emp", this.empForm).then((res) => {
+                    if (res.data.flag) {
+                        this.$notify({
+                            title: '成功',
+                            message: res.data.msg,
+                            type: 'success'
+                        });
+                        this.editEmpDialogVisible = false;
+                    } else {
+                        this.$notify.error({
+                            title: '错误',
+                            message: res.data.msg
+                        });
+                    }
+                }).finally(() => {
+                    this.resetForm('empForm')
+                    this.queryEmp()
+                })
+            },
+            // 删除毕业生就业信息
+            deleteEmp(row){
+                axios.delete("/api/emp/" + row.id).then((res) => {
+                    if (res.data.flag) {
+                        this.$notify({
+                            title: '成功',
+                            message: res.data.msg,
+                            type: 'success'
+                        })
+                    } else {
+                        this.$notify.error({
+                            title: '错误',
+                            message: res.data.msg
+                        })
+                    }
+                }).finally(() => {
+                    this.queryEmp()
+                })
+            },
+            handleEmpSizeChange(val) {
+                this.paginationEmp.pageSize = val;
+                this.queryEmp();
+            },
+            handleEmpCurrentChange(val) {
+                this.paginationEmp.currentPage = val;
+                this.queryEmp();
+            },
             // 重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+            logout() {
+                window.location.href = '/login'
             }
         },
         mounted() {

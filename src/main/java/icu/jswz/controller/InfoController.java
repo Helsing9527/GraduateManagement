@@ -74,11 +74,29 @@ public class InfoController {
     // 新增毕业生就业信息
     @PostMapping("/emp")
     public R createEmp(@RequestBody EmployInfo employInfo) {
-        System.out.println(employInfo);
         boolean save = employInfoService.save(employInfo);
         if (save) {
             return new R(true, null, "成功啦~");
         }
         return new R(false, null, "服务器出差去了~重新提交吧~");
+    }
+
+    @PutMapping("/emp")
+    public R updateEmp(@RequestBody EmployInfo employInfo) {
+        boolean update = employInfoService.updateById(employInfo);
+        if (update) {
+            return new R(true, null, "修改成功");
+        }
+        return new R(false, null, "服务器被炸了...修改失败...");
+    }
+
+    // 删除毕业生就业信息
+    @DeleteMapping("/emp/{id}")
+    public R deleteEmp(@PathVariable Integer id) {
+        boolean removeById = employInfoService.removeById(id);
+        if (removeById) {
+            return new R(true, null, "删除成功啦~");
+        }
+        return new R(false, null, "哎呀~服务器开小差了，页面自动刷新~");
     }
 }

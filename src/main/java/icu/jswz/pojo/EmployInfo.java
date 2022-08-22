@@ -21,4 +21,6 @@ public class EmployInfo {
     private String address;
     // bid
     private Integer bid;
+    // 姓名
+    private String name;
 }

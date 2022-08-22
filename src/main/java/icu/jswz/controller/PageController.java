@@ -10,6 +10,11 @@ public class PageController {
         return "login";
     }
 
+    @RequestMapping("/login")
+    public String logout() {
+        return "login";
+    }
+
     @RequestMapping("/success")
     public String success() {
         return "success";
